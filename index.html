@@ -485,7 +485,7 @@
       <p class="sub">Type a username, tap the items they've earned, then save.</p>
 
       <label class="field-label" for="usernameInput">Username</label>
-      <input type="text" id="usernameInput" placeholder="e.g. Kamiiyorii" autocomplete="off" />
+      <input type="text" id="usernameInput" placeholder="e.g. IHaveNoLifeYada" autocomplete="off" />
       <span id="editFlag"></span>
 
       <div class="item-grid" id="itemGrid"></div>
@@ -563,16 +563,16 @@
 
   <script>
     const ITEMS = [
-      { emoji: "🍅", name: "Ketchup", desc: "Pikachu's favorite!" },
-      { emoji: "😎", name: "Sunglasses", desc: "Make your turtle squad look cool!" },
-      { emoji: "💰", name: "Coin", desc: "Who is carrying these tiny little coins everywhere?" },
-      { emoji: "🦪", name: "Lost Seashell", desc: "Seems sharp... would someone use this as a weapon?! O_O" },
-      { emoji: "🔨", name: "Giant Hammer", desc: "Made from many pieces of metal!" },
-      { emoji: "💎", name: "Everstone", desc: "Catch, Cell!" },
-      { emoji: "🍰", name: "Hidden Stash of Treats", desc: "You'd need an amazing sense of smell to find these treats!" },
-      { emoji: "🌾", name: "Tiny Seed", desc: "No clue where this comes from, but it seems to have some cotton stuck to it." },
-      { emoji: "🔮", name: "Mysterious Artifact", desc: "Glowing with malevolent energy." },
-      { emoji: "🧱", name: "Broken Piece of Something", desc: "A hard-to-identify piece-of-something." },
+      {emoji: "🍅", name: "Ketchup", desc: "Pikachu's favorite!"},
+      {emoji: "😎", name: "Sunglasses", desc: "Make your turtle squad look cool!"},
+      {emoji: "💰", name: "Coin", desc: "Who is carrying these tiny little coins everywhere?"},
+      {emoji: "🦪", name: "Lost Seashell", desc: "Seems sharp... would someone use this as a weapon?! O_O"},
+      {emoji: "🔨", name: "Giant Hammer", desc: "Made from many pieces of metal!"},
+      {emoji: "💎", name: "Everstone", desc: "Catch, Cell!"},
+      {emoji: "🍰", name: "Hidden Stash of Treats", desc: "You'd need an amazing sense of smell to find these treats!"},
+      {emoji: "🌾", name: "Tiny Seed", desc: "No clue where this comes from, but it seems to have some cotton stuck to it."},
+      {emoji: "🔮", name: "Mysterious Artifact", desc: "Glowing with malevolent energy."},
+      {emoji: "🧱", name: "Broken Piece of Something", desc: "A hard-to-identify piece-of-something."},
     ];
     const ITEM_ORDER = ITEMS.map(i => i.emoji);
 
@@ -765,7 +765,7 @@ Perhaps it's a souvenir from an important event?[/i]
           editingUsername = username;
           setFormItems(data[username]);
           updateEditFlag();
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          window.scrollTo({top: 0, behavior: 'smooth'});
         });
         row.querySelector('[data-action="delete"]').addEventListener('click', async () => {
           if (!confirm(`Remove @${username} entirely?`)) return;
@@ -798,7 +798,7 @@ Perhaps it's a souvenir from an important event?[/i]
     }
 
     function escapeHtml(str) {
-      return str.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      return str.replace(/[&<>"']/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
     }
 
     el('selectAllBtn').addEventListener('click', () => {
@@ -885,7 +885,7 @@ Perhaps it's a souvenir from an important event?[/i]
         navigator.clipboard.writeText(area.value);
         copied = true;
       } catch (e) {
-        try { copied = document.execCommand('copy'); } catch (e2) { copied = false; }
+        try {copied = document.execCommand('copy');} catch (e2) {copied = false;}
       }
       const msg = el(msgId);
       if (copied) {
@@ -949,7 +949,7 @@ Perhaps it's a souvenir from an important event?[/i]
 
     // ---------- Backup / import / reset ----------
     el('downloadBtn').addEventListener('click', () => {
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
