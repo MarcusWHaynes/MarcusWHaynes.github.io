@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>user Item Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1E1B2E;
+      --paper: #FBF7FF;
+      --paper-dim: #F0EAFB;
+      --line: #DCD3F0;
+      --gold: #F5B942;
+      --gold-ink: #6B4A00;
+      --coral: #F0553D;
+      --mint: #4CAF82;
+      --muted: #7A7391;
+      --shadow: rgba(30, 27, 46, 0.16);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--ink);
+      color: var(--ink);
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+
+    body {
+      background-image:
+        radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.06) 1px, transparent 0);
+      background-size: 22px 22px;
+      min-height: 100vh;
+      padding: 32px 16px 64px;
+    }
+
+    .wrap {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    header.top {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      color: var(--paper);
+    }
+
+    header.top h1 {
+      font-family: 'Baloo 2', sans-serif;
+      font-weight: 800;
+      font-size: 34px;
+      margin: 0 0 2px;
+      letter-spacing: 0.2px;
+    }
+
+    header.top p {
+      margin: 0;
+      color: rgba(251, 247, 255, 0.65);
+      font-size: 14px;
+    }
+
+    .stat-pill {
+      background: rgba(251, 247, 255, 0.08);
+      border: 1px solid rgba(251, 247, 255, 0.18);
+      color: var(--paper);
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .stat-pill b {
+      color: var(--gold);
+      font-family: 'Baloo 2';
+      font-size: 15px;
+    }
+
+    .card {
+      background: var(--paper);
+      border-radius: var(--radius);
+      padding: 22px 22px 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 30px var(--shadow);
+    }
+
+    .card h2 {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 19px;
+      margin: 0 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card .sub {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 0 0 16px;
+    }
+
+    label.field-label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: none;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      font-family: inherit;
+      font-size: 15px;
+      padding: 11px 13px;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      color: var(--ink);
+      outline: none;
+      transition: border-color .15s ease;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--gold);
+    }
+
+    .edit-flag {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    .edit-flag.new {
+      background: rgba(76, 175, 130, 0.14);
+      color: #2f8560;
+    }
+
+    .edit-flag.existing {
+      background: rgba(245, 185, 66, 0.22);
+      color: var(--gold-ink);
+    }
+
+    .item-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin: 14px 0 4px;
+    }
+
+    .item-chip {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      border: 1.5px solid var(--line);
+      background: white;
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      transition: transform .1s ease, border-color .15s ease, background .15s ease;
+    }
+
+    .item-chip .emoji {
+      font-size: 18px;
+    }
+
+    .item-chip:hover {
+      border-color: #C8B8ED;
+    }
+
+    .item-chip:active {
+      transform: scale(0.97);
+    }
+
+    .item-chip.on {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--gold-ink);
+    }
+
+    .btn {
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      border-radius: 10px;
+      padding: 11px 18px;
+      cursor: pointer;
+      transition: transform .1s ease, opacity .15s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink);
+      border: 1.5px solid var(--line);
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--coral);
+      border: 1.5px solid rgba(240, 85, 61, 0.4);
+    }
+
+    .btn-small {
+      padding: 7px 12px;
+      font-size: 12.5px;
+      border-radius: 8px;
+    }
+
+    .btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .user-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .list-tools {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .list-tools .links {
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+
+    .list-tools .links button {
+      background: none;
+      border: none;
+      color: var(--ink);
+      font-weight: 600;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 12.5px;
+      padding: 0;
+    }
+
+    .user-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: white;
+    }
+
+    .user-row input[type="checkbox"] {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .user-row .uname {
+      font-weight: 700;
+      font-size: 14px;
+      min-width: 130px;
+    }
+
+    .user-row .items {
+      flex: 1;
+      font-size: 17px;
+      letter-spacing: 2px;
+    }
+
+    .user-row .row-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .icon-btn {
+      background: var(--paper-dim);
+      border: none;
+      border-radius: 8px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .icon-btn:hover {
+      background: var(--line);
+    }
+
+    .empty-note {
+      color: var(--muted);
+      font-size: 13.5px;
+      text-align: center;
+      padding: 18px 0;
+    }
+
+    .segmented {
+      display: inline-flex;
+      background: var(--paper-dim);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .segmented button {
+      border: none;
+      background: transparent;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--muted);
+    }
+
+    .segmented button.active {
+      background: white;
+      color: var(--ink);
+      box-shadow: 0 2px 6px rgba(30, 27, 46, 0.1);
+    }
+
+    .gen-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .post-block {
+      margin-top: 16px;
+    }
+
+    .post-block .post-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .post-block .post-head span {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    textarea.output {
+      width: 100%;
+      min-height: 220px;
+      font-family: 'Inter', monospace;
+      font-size: 12.5px;
+      line-height: 1.5;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      resize: vertical;
+      background: #FCFAFF;
+      color: var(--ink);
+    }
+
+    .copied-msg {
+      font-size: 12px;
+      color: var(--mint);
+      font-weight: 700;
+      margin-left: 8px;
+      opacity: 0;
+      transition: opacity .2s;
+    }
+
+    .copied-msg.show {
+      opacity: 1;
+    }
+
+    .data-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .data-row .spacer {
+      flex: 1;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--ink);
+      color: var(--paper);
+      padding: 11px 18px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s, transform .2s;
+      z-index: 50;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-4px);
+    }
+
+    @media (max-width: 560px) {
+      .user-row {
+        flex-wrap: wrap;
+      }
+
+      .user-row .uname {
+        min-width: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <header class="top">
+      <div>
+        <h1>user Item Tracker</h1>
+        <p>Log what each user earned, then generate the forum post.</p>
+      </div>
+      <div class="stat-pill"><b id="statCount">0</b> users tracked</div>
+    </header>
+
+    <!-- Add / update -->
+    <div class="card">
+      <h2>Add or update a user</h2>
+      <p class="sub">Type a username, tap the items they've earned, then save.</p>
+
+      <label class="field-label" for="usernameInput">Username</label>
+      <input type="text" id="usernameInput" placeholder="e.g. Kamiiyorii" autocomplete="off" />
+      <span id="editFlag"></span>
+
+      <div class="item-grid" id="itemGrid"></div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" id="saveBtn">Save user</button>
+        <button class="btn btn-ghost" id="clearFormBtn">Clear form</button>
+      </div>
+    </div>
+
+    <!-- Tracked list -->
+    <div class="card">
+      <h2>Tracked users</h2>
+      <p class="sub">Tick a user to include them in a "selected" forum post below.</p>
+
+      <div class="list-tools">
+        <div class="links">
+          <button id="selectAllBtn">Select all</button> &nbsp;·&nbsp;
+          <button id="selectNoneBtn">Select none</button>
+        </div>
+        <div class="links" id="selectedCountLabel">0 selected</div>
+      </div>
+
+      <div class="user-list" id="userList"></div>
+      <div class="empty-note" id="emptyNote" style="display:none;">No users yet — add one above to get started.</div>
+    </div>
+
+    <!-- Generate -->
+    <div class="card">
+      <h2>Generate forum post</h2>
+      <p class="sub">Posts are split into batches of 50 users each, formatted and ready to paste.</p>
+
+      <div class="gen-controls">
+        <div class="segmented" id="modeSeg">
+          <button class="active" data-mode="all">All users</button>
+          <button data-mode="selected">Selected only</button>
+        </div>
+        <button class="btn btn-primary" id="generateBtn">Generate</button>
+      </div>
+
+      <div id="postOutputs"></div>
+    </div>
+
+    <!-- Completionists -->
+    <div class="card">
+      <h2>Secret Ticket</h2>
+      <p class="sub">Users who've collected all 10 items.</p>
+
+      <div class="gen-controls">
+        <div class="stat-pill" style="background:var(--paper-dim); color:var(--ink); border-color:var(--line);">
+          <b id="compCount" style="color:var(--gold-ink);">0</b> Secret Ticketer(s) found
+        </div>
+        <button class="btn btn-primary" id="generateCompBtn">Generate Secret Ticket post</button>
+      </div>
+
+      <div id="compOutputs"></div>
+    </div>
+
+    <!-- Data management -->
+    <div class="card">
+      <h2>Backup &amp; data</h2>
+      <p class="sub">Your data auto-saves in this browser. Use these to back it up or move it elsewhere.</p>
+      <div class="data-row">
+        <button class="btn btn-ghost btn-small" id="downloadBtn">Download JSON backup</button>
+        <button class="btn btn-ghost btn-small" id="importBtn">Import JSON (merge)</button>
+        <input type="file" id="importFile" accept="application/json" />
+        <div class="spacer"></div>
+        <button class="btn btn-danger btn-small" id="resetBtn">Reset all data</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const ITEMS = [
+      { emoji: "🍅", name: "Ketchup", desc: "Pikachu's favorite!" },
+      { emoji: "😎", name: "Sunglasses", desc: "Make your turtle squad look cool!" },
+      { emoji: "💰", name: "Coin", desc: "Who is carrying these tiny little coins everywhere?" },
+      { emoji: "🦪", name: "Lost Seashell", desc: "Seems sharp... would someone use this as a weapon?! O_O" },
+      { emoji: "🔨", name: "Giant Hammer", desc: "Made from many pieces of metal!" },
+      { emoji: "💎", name: "Everstone", desc: "Catch, Cell!" },
+      { emoji: "🍰", name: "Hidden Stash of Treats", desc: "You'd need an amazing sense of smell to find these treats!" },
+      { emoji: "🌾", name: "Tiny Seed", desc: "No clue where this comes from, but it seems to have some cotton stuck to it." },
+      { emoji: "🔮", name: "Mysterious Artifact", desc: "Glowing with malevolent energy." },
+      { emoji: "🧱", name: "Broken Piece of Something", desc: "A hard-to-identify piece-of-something." },
+    ];
+    const ITEM_ORDER = ITEMS.map(i => i.emoji);
+
+    const HEADER_TEXT = "What's this? Your Pokemon have brought you some cool items! You can post more Canva with other Pokemon if you'd like! ";
+
+    const LEGEND_TEXT = `All items:
+
+[quote][b][size=125]🍅 Ketchup [/size][/b]
+[i]Pikachu's favorite![/i]
+[/quote]
+[quote][b][size=125]😎 Sunglasses[/size][/b]
+[i]Make your turtle squad look cool![/i]
+[/quote]
+[quote][b][size=125]💰 Coin[/size][/b]
+[i]Who is carrying these tiny little coins everywhere?[/i]
+[/quote]
+[quote][b][size=125]🦪 Lost Seashell[/size][/b]
+[i]Seems sharp... would someone use this as a weapon?![/i] O_O
+[/quote]
+[quote][b][size=125]🔨 Giant Hammer[/size][/b]
+[i]Made from many pieces of metal![/i]
+[/quote]
+[quote][b][size=125]💎 Everstone[/size][/b]
+[i]Catch, Cell![/i]
+[/quote]
+[quote][b][size=125]🍰 Hidden Stash of Treats[/size][/b]
+[i]You'd need an amazing sense of smell to find these treats! 
+Cakes, pastries, everything you wanna slurp up! 😛[/i]
+[/quote]
+[quote][b][size=125]🌾Tiny Seed[/size][/b]
+[i]No clue where this comes from, but it seems to have some cotton stuck to it.[/i]
+[/quote]
+[quote][b][size=125]🔮 Mysterious Artifact [/size][/b]
+[i]Glowing with malevolent energy. 
+Made from a rare material that seems to date back.. 3,000 years ago?![/i]
+[/quote]
+[quote][size=125][b]🧱 Broken Piece of Something [/b][/size]
+[i]A hard-to-identify piece-of-something. Maybe it was part of a cage once? 
+Looks like whatever its from was high kicked to smithereens with great force!
+Perhaps it's a souvenir from an important event?[/i]
+[/quote]`;
+
+    const COMPLETIONIST_MESSAGE = "Congratulations, you managed to collect all ten items and earned the secret Pokemon completionist ticket!! 😄";
+    const COMPLETIONIST_IMAGE = "[quote][img]https://cdn.myanimelist.net/s/common/bbcode/d9c94cd6-be82-403c-ad85-21800282dd32?s=9966f7caabb03e5b6c0199af0f9e7c3d[/img][/quote]";
+
+    const STORAGE_KEY = "user-items-data";
+
+    let data = {};          // { username: [emoji, emoji, ...] }
+    let selected = new Set(); // usernames ticked for "selected" generation
+    let editingUsername = null; // username currently loaded into the form, if it's an existing one
+    let selectedItemsInForm = new Set();
+
+    const el = (id) => document.getElementById(id);
+
+    function showToast(msg) {
+      const t = el('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(showToast._h);
+      showToast._h = setTimeout(() => t.classList.remove('show'), 1800);
+    }
+
+    function sortedItems(items) {
+      return [...items].sort((a, b) => ITEM_ORDER.indexOf(a) - ITEM_ORDER.indexOf(b));
+    }
+
+    async function loadData() {
+      try {
+        const res = await window.storage.get(STORAGE_KEY, false);
+        data = res && res.value ? JSON.parse(res.value) : {};
+      } catch (e) {
+        data = {};
+      }
+    }
+
+    async function saveData() {
+      try {
+        await window.storage.set(STORAGE_KEY, JSON.stringify(data), false);
+      } catch (e) {
+        showToast("Couldn't save — try again");
+      }
+    }
+
+    // ---------- Item picker ----------
+    function renderItemGrid() {
+      const grid = el('itemGrid');
+      grid.innerHTML = '';
+      ITEMS.forEach(item => {
+        const chip = document.createElement('div');
+        chip.className = 'item-chip';
+        chip.dataset.emoji = item.emoji;
+        chip.title = item.desc;
+        chip.innerHTML = `<span class="emoji">${item.emoji}</span><span>${item.name}</span>`;
+        chip.addEventListener('click', () => {
+          if (selectedItemsInForm.has(item.emoji)) selectedItemsInForm.delete(item.emoji);
+          else selectedItemsInForm.add(item.emoji);
+          chip.classList.toggle('on');
+        });
+        grid.appendChild(chip);
+      });
+    }
+
+    function setFormItems(items) {
+      selectedItemsInForm = new Set(items);
+      document.querySelectorAll('.item-chip').forEach(chip => {
+        chip.classList.toggle('on', selectedItemsInForm.has(chip.dataset.emoji));
+      });
+    }
+
+    function clearForm() {
+      el('usernameInput').value = '';
+      editingUsername = null;
+      setFormItems([]);
+      updateEditFlag();
+    }
+
+    function updateEditFlag() {
+      const flag = el('editFlag');
+      const name = el('usernameInput').value.trim();
+      if (!name) {
+        flag.innerHTML = '';
+        return;
+      }
+      if (data.hasOwnProperty(name)) {
+        flag.innerHTML = '<span class="edit-flag existing">Editing existing user — saving will replace their item list below</span>';
+      } else {
+        flag.innerHTML = '<span class="edit-flag new">New user</span>';
+      }
+    }
+
+    el('usernameInput').addEventListener('input', () => {
+      const name = el('usernameInput').value.trim();
+      updateEditFlag();
+      if (data.hasOwnProperty(name)) {
+        editingUsername = name;
+        setFormItems(data[name]);
+      } else {
+        editingUsername = null;
+        setFormItems([]);
+      }
+    });
+
+    el('saveBtn').addEventListener('click', async () => {
+      const name = el('usernameInput').value.trim();
+      if (!name) {
+        showToast("Enter a username first");
+        return;
+      }
+      const items = sortedItems([...selectedItemsInForm]);
+      data[name] = items;
+      await saveData();
+      clearForm();
+      renderuserList();
+      showToast(`Saved ${name}`);
+    });
+
+    el('clearFormBtn').addEventListener('click', clearForm);
+
+    // ---------- user list ----------
+    function renderuserList() {
+      const list = el('userList');
+      const usernames = Object.keys(data);
+      el('statCount').textContent = usernames.length;
+      el('emptyNote').style.display = usernames.length ? 'none' : 'block';
+      list.innerHTML = '';
+
+      usernames.forEach(username => {
+        const row = document.createElement('div');
+        row.className = 'user-row';
+
+        const items = sortedItems(data[username]).join(' ');
+
+        row.innerHTML = `
+      <input type="checkbox" data-username="${username}" ${selected.has(username) ? 'checked' : ''} />
+      <div class="uname">@${escapeHtml(username)}</div>
+      <div class="items">${items || '<span style="color:#B8AFCF;font-size:13px;">no items</span>'}</div>
+      <div class="row-actions">
+        <button class="icon-btn" data-action="edit" title="Edit">Edit</button>
+        <button class="icon-btn" data-action="delete" title="Delete">Delete</button>
+      </div>
+    `;
+
+        row.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
+          if (e.target.checked) selected.add(username);
+          else selected.delete(username);
+          updateSelectedCount();
+        });
+        row.querySelector('[data-action="edit"]').addEventListener('click', () => {
+          el('usernameInput').value = username;
+          editingUsername = username;
+          setFormItems(data[username]);
+          updateEditFlag();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        row.querySelector('[data-action="delete"]').addEventListener('click', async () => {
+          if (!confirm(`Remove @${username} entirely?`)) return;
+          delete data[username];
+          selected.delete(username);
+          await saveData();
+          renderuserList();
+          showToast(`Removed ${username}`);
+        });
+
+        list.appendChild(row);
+      });
+
+      updateSelectedCount();
+      updateCompletionistCount();
+    }
+
+    function updateSelectedCount() {
+      el('selectedCountLabel').textContent = `${selected.size} selected`;
+    }
+
+    function isCompletionist(username) {
+      const items = new Set(data[username] || []);
+      return ITEM_ORDER.every(emoji => items.has(emoji));
+    }
+
+    function updateCompletionistCount() {
+      const count = Object.keys(data).filter(isCompletionist).length;
+      el('compCount').textContent = count;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    el('selectAllBtn').addEventListener('click', () => {
+      Object.keys(data).forEach(u => selected.add(u));
+      renderuserList();
+    });
+    el('selectNoneBtn').addEventListener('click', () => {
+      selected.clear();
+      renderuserList();
+    });
+
+    // ---------- Generate ----------
+    let genMode = 'all';
+    el('modeSeg').addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-mode]');
+      if (!btn) return;
+      genMode = btn.dataset.mode;
+      document.querySelectorAll('#modeSeg button').forEach(b => b.classList.toggle('active', b === btn));
+    });
+
+    function buildPosts(usernames) {
+      const withItems = usernames.filter(u => data[u] && data[u].length > 0);
+      const chunkSize = 50;
+      const chunks = [];
+      for (let i = 0; i < withItems.length; i += chunkSize) {
+        chunks.push(withItems.slice(i, i + chunkSize));
+      }
+      return chunks.map(chunk => {
+        const lines = [HEADER_TEXT, ''];
+        chunk.forEach(u => {
+          lines.push(`@${u} [size=200]${sortedItems(data[u]).join(' ')}[/size]`);
+        });
+        lines.push('');
+        lines.push(LEGEND_TEXT);
+        return lines.join('\n');
+      });
+    }
+
+    el('generateBtn').addEventListener('click', () => {
+      let usernames;
+      if (genMode === 'selected') {
+        usernames = Object.keys(data).filter(u => selected.has(u));
+        if (usernames.length === 0) {
+          showToast("No users selected");
+          return;
+        }
+      } else {
+        usernames = Object.keys(data);
+      }
+
+      const posts = buildPosts(usernames);
+      const container = el('postOutputs');
+      container.innerHTML = '';
+
+      if (posts.length === 0) {
+        container.innerHTML = '<p class="empty-note">Nobody in this batch has items yet.</p>';
+        return;
+      }
+
+      posts.forEach((text, idx) => {
+        const block = document.createElement('div');
+        block.className = 'post-block';
+        block.innerHTML = `
+      <div class="post-head">
+        <span>Post ${idx + 1} of ${posts.length}</span>
+        <span>
+          <button class="btn btn-ghost btn-small" data-copy="${idx}">Copy</button>
+          <span class="copied-msg" id="copiedMsg${idx}">Copied!</span>
+        </span>
+      </div>
+      <textarea class="output" id="outputArea${idx}" readonly>${text}</textarea>
+    `;
+        container.appendChild(block);
+        block.querySelector(`[data-copy="${idx}"]`).addEventListener('click', () => copyOutput(`outputArea${idx}`, `copiedMsg${idx}`));
+      });
+    });
+
+    function copyOutput(areaId, msgId) {
+      const area = el(areaId);
+      area.focus();
+      area.select();
+      let copied = false;
+      try {
+        navigator.clipboard.writeText(area.value);
+        copied = true;
+      } catch (e) {
+        try { copied = document.execCommand('copy'); } catch (e2) { copied = false; }
+      }
+      const msg = el(msgId);
+      if (copied) {
+        msg.classList.add('show');
+        setTimeout(() => msg.classList.remove('show'), 1500);
+      } else {
+        showToast("Select-all + Ctrl/Cmd+C to copy");
+      }
+    }
+
+    // ---------- Completionists ----------
+    function buildCompletionistPosts(usernames) {
+      const completionists = usernames.filter(isCompletionist);
+      const chunkSize = 50;
+      const chunks = [];
+      for (let i = 0; i < completionists.length; i += chunkSize) {
+        chunks.push(completionists.slice(i, i + chunkSize));
+      }
+      return chunks.map(chunk => {
+        const lines = [];
+        chunk.forEach(u => {
+          lines.push(`@${u} [size=200]${sortedItems(data[u]).join(' ')}[/size]`);
+        });
+        lines.push('');
+        lines.push(COMPLETIONIST_MESSAGE);
+        lines.push('');
+        lines.push(COMPLETIONIST_IMAGE);
+        return lines.join('\n');
+      });
+    }
+
+    el('generateCompBtn').addEventListener('click', () => {
+      const posts = buildCompletionistPosts(Object.keys(data));
+      const container = el('compOutputs');
+      container.innerHTML = '';
+
+      if (posts.length === 0) {
+        container.innerHTML = '<p class="empty-note">Nobody has collected all 10 items yet.</p>';
+        return;
+      }
+
+      posts.forEach((text, idx) => {
+        const block = document.createElement('div');
+        block.className = 'post-block';
+        const areaId = `compOutputArea${idx}`;
+        const msgId = `compCopiedMsg${idx}`;
+        block.innerHTML = `
+      <div class="post-head">
+        <span>Completionist post ${idx + 1} of ${posts.length}</span>
+        <span>
+          <button class="btn btn-ghost btn-small" data-copy="${idx}">Copy</button>
+          <span class="copied-msg" id="${msgId}">Copied!</span>
+        </span>
+      </div>
+      <textarea class="output" id="${areaId}" readonly>${text}</textarea>
+    `;
+        container.appendChild(block);
+        block.querySelector(`[data-copy="${idx}"]`).addEventListener('click', () => copyOutput(areaId, msgId));
+      });
+    });
+
+    // ---------- Backup / import / reset ----------
+    el('downloadBtn').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'items_data.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    el('importBtn').addEventListener('click', () => el('importFile').click());
+    el('importFile').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (evt) => {
+        try {
+          const incoming = JSON.parse(evt.target.result);
+          let addedUsers = 0, addedItems = 0;
+          Object.keys(incoming).forEach(username => {
+            const incomingItems = Array.isArray(incoming[username]) ? incoming[username] : [];
+            if (!data[username]) {
+              data[username] = [];
+              addedUsers++;
+            }
+            incomingItems.forEach(it => {
+              if (!data[username].includes(it)) {
+                data[username].push(it);
+                addedItems++;
+              }
+            });
+            data[username] = sortedItems(data[username]);
+          });
+          await saveData();
+          renderuserList();
+          showToast(`Imported: ${addedUsers} new user(s), ${addedItems} item(s) added`);
+        } catch (err) {
+          showToast("That file isn't valid JSON");
+        }
+        e.target.value = '';
+      };
+      reader.readAsText(file);
+    });
+
+    el('resetBtn').addEventListener('click', async () => {
+      if (!confirm("This deletes ALL tracked users and items. This can't be undone. Continue?")) return;
+      data = {};
+      selected.clear();
+      await saveData();
+      renderuserList();
+      el('postOutputs').innerHTML = '';
+      showToast("All data cleared");
+    });
+
+    // ---------- Init ----------
+    (async function init() {
+      renderItemGrid();
+      await loadData();
+      renderuserList();
+    })();
+  </script>
+</body>
+
+</html>
